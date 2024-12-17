@@ -66,12 +66,14 @@
             label="Id pattern"
             description="Id pattern for filtering entities. This preference can be empty, in that case, entities won't be filtered by id."
             default="" />
+        <!--
         <preference
             name="query"
             type="text"
             label="Query"
             description="Filter entities by providing a query using the Simple Query Language."
             default="" />
+        -->
         <preference
             name="ngsi_attributes"
             type="text"
@@ -93,7 +95,9 @@
     </preferences>
     <wiring>
         <outputendpoint name="entityOutput" type="text" label="Entities" description="Initial entity values and entity updates" friendcode="entity-list"/>
+        <!--
         <outputendpoint name="normalizedOutput" type="text" label="Normalized Entities" description="Initial entity values and entity updates" friendcode="entity-normalized-list"/>
+        -->
         <outputendpoint name="ngsimetadata" type="text" label="NGSI metadata" description="Metadata of the NGSI config usable on wizards creating data dashboards such as NGSI-dashboard-creatorI" friendcode="ngsi-metadata" />
     </wiring>
     <scripts>

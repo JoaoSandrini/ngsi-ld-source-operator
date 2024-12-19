@@ -32,7 +32,7 @@
 
     const refreshNGSISubscription = function refreshNGSISubscription() {
         if (this.subscriptionId) {
-            this.connection.v2.updateSubscription({
+            this.connection.ld.updateSubscription({
                 id: this.subscriptionId,
                 expires: moment().add('3', 'hours').toISOString()
             }).then(
@@ -153,7 +153,7 @@
             }
 
             const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
-            this.connection.v2.createSubscription({
+            this.connection.ld.createSubscription({
                 description: "ngsi source subscription",
                 subject: {
                     entities: entities,
@@ -189,7 +189,7 @@
     };
 
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
-        return this.connection.v2.listEntities(
+        return this.connection.ld.queryEntities(
             {
                 idPattern: idPattern,
                 type: types,
@@ -267,7 +267,7 @@
         }
 
         if (this.subscriptionId != null) {
-            this.connection.v2.deleteSubscription(this.subscriptionId).then(
+            this.connection.ld.deleteSubscription(this.subscriptionId).then(
                 () => {
                     MashupPlatform.operator.log("Old subscription has been cancelled sucessfully", MashupPlatform.log.INFO);
                 },
@@ -309,7 +309,7 @@
                 return;
             }
 
-            this.connection.v2.deleteSubscription(this.subscriptionId).then(
+            this.connection.ld.deleteSubscription(this.subscriptionId).then(
                 () => {
                     MashupPlatform.operator.log("Subscription cancelled sucessfully", MashupPlatform.log.INFO);
                 },

@@ -105,7 +105,7 @@
                 this.refresh_interval = setInterval(refreshNGSISubscription.bind(this), 1000 * 60 * 60 * 2);  // each 2 hours
                 doInitialQueries.call(this, entityIdList);
                 window.addEventListener("beforeunload", function () {
-                    this.connection.cancelSubscription(this.subscriptionId, {
+                    this.connection.ld.deleteSubscription(this.subscriptionId, {
                         onSuccess: function () {
                             MashupPlatform.operator.log("Subscription cancelled sucessfully", MashupPlatform.log.INFO);
                         },
@@ -123,7 +123,7 @@
                 }
             }
         };
-        this.connection.createSubscription(entityIdList, attributeList, duration, throttling, notifyConditions, options);
+        this.connection.ld.createSubscription(entityIdList, attributeList, duration, throttling, notifyConditions, options);
     };
 
     var refreshNGSISubscription = function refreshNGSISubscription() {
@@ -142,12 +142,12 @@
                     MashupPlatform.operator.log("Error refreshing current context broker subscription");
                 }
             };
-            this.connection.updateSubscription(this.subscriptionId, duration, throttling, notifyConditions, options);
+            this.connection.ld.updateSubscription(this.subscriptionId, duration, throttling, notifyConditions, options);
         }
     };
 
     var requestInitialData = function requestInitialData(entities, page) {
-        this.connection.query(
+        this.connection.ld.queryEntities(
             entities,
             null, // request all the attributes
             {
@@ -187,7 +187,7 @@
         }
 
         if (this.subscriptionId != null) {
-            this.connection.cancelSubscription(this.subscriptionId, {
+            this.connection.ld.deleteSubscription(this.subscriptionId, {
                 onSuccess: function () {
                     MashupPlatform.operator.log("Old subscription has been cancelled sucessfully", MashupPlatform.log.INFO);
                 },

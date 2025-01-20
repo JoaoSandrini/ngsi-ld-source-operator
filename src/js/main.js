@@ -93,10 +93,6 @@
             ngsi_proxy_url: this.ngsi_proxy
         });
 
-        this.connection = {
-            LD: new NGSI.Connection.LD(ngsiConnection) // Ensure LD is properly instantiated
-        };
-
         let types = MashupPlatform.prefs.get('ngsi_entities').trim().replace(/,+\s+/g, ',');
         if (types === '') {
             types = undefined;
@@ -193,7 +189,7 @@
     };
 
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
-        return this.connection.LD.queryEntities(
+        return this.LD.queryEntities(
             {
                 idPattern: idPattern,
                 type: types,

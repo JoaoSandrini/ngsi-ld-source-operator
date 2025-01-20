@@ -193,11 +193,6 @@
     };
 
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
-        if (!this.connection || !this.connection.LD) {
-            console.error("Connection or LD is not initialized correctly");
-            return;
-        };
-
         return this.connection.LD.queryEntities(
             {
                 idPattern: idPattern,

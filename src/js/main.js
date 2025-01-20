@@ -96,7 +96,6 @@
         this.connection = {
             LD: new NGSI.Connection.LD(ngsiConnection) // Ensure LD is properly instantiated
         };
-        
 
         let types = MashupPlatform.prefs.get('ngsi_entities').trim().replace(/,+\s+/g, ',');
         if (types === '') {
@@ -197,7 +196,7 @@
         if (!this.connection || !this.connection.LD) {
             console.error("Connection or LD is not initialized correctly");
             return;
-        }
+        };
 
         return this.connection.LD.queryEntities(
             {

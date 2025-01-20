@@ -87,7 +87,7 @@
             request_headers['FIWARE-ServicePath'] = path;
         }
 
-        this.connection = new NGSI.Connection(this.ngsi_server, {
+        this.connection = new NGSI.Connection.LD(this.ngsi_server, {
             use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token'),
             request_headers: request_headers,
             ngsi_proxy_url: this.ngsi_proxy

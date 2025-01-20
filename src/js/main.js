@@ -32,7 +32,7 @@
 
     const refreshNGSISubscription = function refreshNGSISubscription() {
         if (this.subscriptionId) {
-            this.connection.ld.updateSubscription({
+            this.connection.LD.updateSubscription({
                 id: this.subscriptionId,
                 expires: moment().add('3', 'hours').toISOString()
             }).then(
@@ -87,7 +87,7 @@
             request_headers['FIWARE-ServicePath'] = path;
         }
 
-        this.connection = new NGSI.Connection.LD(this.ngsi_server, {
+        this.connection = new NGSI.Connection(this.ngsi_server, {
             use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token'),
             request_headers: request_headers,
             ngsi_proxy_url: this.ngsi_proxy
@@ -153,7 +153,7 @@
             }
 
             const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
-            this.connection.ld.createSubscription({
+            this.connection.LD.createSubscription({
                 description: "ngsi source subscription",
                 subject: {
                     entities: entities,
@@ -189,7 +189,7 @@
     };
 
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
-        return this.connection.ld.queryEntities(
+        return this.connection.LD.queryEntities(
             {
                 idPattern: idPattern,
                 type: types,
@@ -267,7 +267,7 @@
         }
 
         if (this.subscriptionId != null) {
-            this.connection.ld.deleteSubscription(this.subscriptionId).then(
+            this.connection.LD.deleteSubscription(this.subscriptionId).then(
                 () => {
                     MashupPlatform.operator.log("Old subscription has been cancelled sucessfully", MashupPlatform.log.INFO);
                 },
@@ -309,7 +309,7 @@
                 return;
             }
 
-            this.connection.ld.deleteSubscription(this.subscriptionId).then(
+            this.connection.LD.deleteSubscription(this.subscriptionId).then(
                 () => {
                     MashupPlatform.operator.log("Subscription cancelled sucessfully", MashupPlatform.log.INFO);
                 },

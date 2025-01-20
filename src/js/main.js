@@ -189,7 +189,7 @@
     };
 
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
-        return this.LD.queryEntities(
+        return this.ld.queryEntities(
             {
                 idPattern: idPattern,
                 type: types,

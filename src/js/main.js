@@ -87,11 +87,16 @@
             request_headers['FIWARE-ServicePath'] = path;
         }
 
-        this.connection = new NGSI.Connection(this.ngsi_server, {
+        const ngsiConnection = new NGSI.Connection(this.ngsi_server, {
             use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token'),
             request_headers: request_headers,
             ngsi_proxy_url: this.ngsi_proxy
         });
+
+        this.connection = {
+            LD: new NGSI.Connection.LD(ngsiConnection) // Ensure LD is properly instantiated
+        };
+        
 
         let types = MashupPlatform.prefs.get('ngsi_entities').trim().replace(/,+\s+/g, ',');
         if (types === '') {
@@ -189,6 +194,11 @@
     };
 
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
+        if (!this.connection || !this.connection.LD) {
+            console.error("Connection or LD is not initialized correctly");
+            return;
+        }
+
         return this.connection.LD.queryEntities(
             {
                 idPattern: idPattern,

@@ -153,14 +153,11 @@
             }
 
             const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
-            this.connection.ld.createSubscription({
+
+        this.connection.ld.createSubscription({
                 id: "urn:ngsi-ld:Subscription:mySubscription",
                 type: "Subscription",
-                description: "ngsi source subscription",
-                subject: {
-                    entities: entities,
-                    condition: condition
-                },
+                entities: entities,
                 notification: {
                     attrs: attributes != null ? attributes.split(/,\s*/) : undefined,
                     metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
@@ -171,15 +168,17 @@
                 },
                 expires: moment().add('3', 'hours').toISOString()
             }, {
-                skipInitialNotification: true
+                skipInitialNotification: true,
+                "@context": [
+                    "https://fiware.github.io/data-models/context.jsonld"
+                ]
             }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);
                     this.subscriptionId = response.subscription.id;
                     this.refresh_interval = setInterval(refreshNGSISubscription.bind(this), 1000 * 60 * 60 * 2);  // each 2 hours
                     doInitialQueries.call(this, id_pattern, types, filter, attributes, metadata);
-                },
-                (e) => {
+                }, (e) => {
                     if (e instanceof NGSI.ProxyConnectionError) {
                         MashupPlatform.operator.log("Error connecting with the NGSI Proxy: " + e.cause.message);
                     } else {

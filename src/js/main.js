@@ -191,10 +191,8 @@
             {
                 idPattern: idPattern,
                 type: types,
-                count: true,
+                count: false,
                 keyValues: attrsFormat === "keyValues",
-                limit: 100,
-                offset: page * 100,
                 q: filter,
                 attrs: attributes,
                 metadata: metadata

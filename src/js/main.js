@@ -45,7 +45,7 @@
             );
         }
     };
-    
+
     const handlerReceiveEntities = function handlerReceiveEntities(format, elements) {
         if (MashupPlatform.operator.outputs.entityOutput.connected && format === "keyValues") {
             MashupPlatform.wiring.pushEvent("entityOutput", elements);

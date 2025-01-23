@@ -45,7 +45,7 @@
             );
         }
     };
-
+    
     const handlerReceiveEntities = function handlerReceiveEntities(format, elements) {
         if (MashupPlatform.operator.outputs.entityOutput.connected && format === "keyValues") {
             MashupPlatform.wiring.pushEvent("entityOutput", elements);
@@ -86,10 +86,6 @@
         if (path !== '' && path !== '/') {
             request_headers['FIWARE-ServicePath'] = path;
         }
-
-        const authToken = MashupPlatform.prefs.get('auth_token'); // Adjust this line to match how you retrieve the token
-
-        request_headers['Authorization'] = `Bearer ${authToken}`;
 
         this.connection = new NGSI.Connection(this.ngsi_server, {
             use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token'),

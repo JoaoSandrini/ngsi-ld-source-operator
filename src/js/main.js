@@ -87,6 +87,10 @@
             request_headers['FIWARE-ServicePath'] = path;
         }
 
+        const authToken = MashupPlatform.prefs.get('auth_token'); // Adjust this line to match how you retrieve the token
+
+        request_headers['Authorization'] = `Bearer ${authToken}`;
+
         this.connection = new NGSI.Connection(this.ngsi_server, {
             use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token'),
             request_headers: request_headers,
@@ -174,8 +178,7 @@
                 "@context": [
                     "https://fiware.github.io/data-models/context.jsonld"
                 ],
-                skipInitialNotification: true,
-                requestHeaders: request_headers
+                skipInitialNotification: true
             }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);

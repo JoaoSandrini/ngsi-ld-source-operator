@@ -157,15 +157,15 @@
             this.connection.ld.createSubscription({
                 "id": "urn:ngsi-ld:Subscription:mySubscription",
                 "type": "Subscription",
-                "entities":[
-                            {
-                                "type": types,
-                            }
-                        ],
+                "entities": [
+                    {
+                        "type": types,
+                    }
+                ],
                 "notification": {
                     "attrs": attributes != null ? attributes.split(/,\s*/) : undefined,
                     "metadata": metadata != null ? metadata.split(/,\s*/) : undefined,
-                    "attrsFormat"   : attrsFormat,
+                    "attrsFormat": attrsFormat,
                     callback: (notification) => {
                         handlerReceiveEntities.call(this, attrsFormat, notification.data);
                     }

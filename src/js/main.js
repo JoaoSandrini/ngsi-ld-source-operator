@@ -154,40 +154,40 @@
 
             const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
 
-        this.connection.ld.createSubscription({
-                id: "urn:ngsi-ld:Subscription:mySubscription",
-                type: "Subscription",
-                entities: entities,
-                notification: {
-                    attrs: attributes != null ? attributes.split(/,\s*/) : undefined,
-                    metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
-                    attrsFormat: attrsFormat,
-                    callback: (notification) => {
-                        handlerReceiveEntities.call(this, attrsFormat, notification.data);
+            this.connection.ld.createSubscription({
+                    id: "urn:ngsi-ld:Subscription:mySubscription",
+                    type: "Subscription",
+                    entities: entities,
+                    notification: {
+                        attrs: attributes != null ? attributes.split(/,\s*/) : undefined,
+                        metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
+                        attrsFormat: attrsFormat,
+                        callback: (notification) => {
+                            handlerReceiveEntities.call(this, attrsFormat, notification.data);
+                        }
+                    },
+                    expires: moment().add('3', 'hours').toISOString()
+                }, {
+                    skipInitialNotification: true,
+                    "@context": [
+                        "https://fiware.github.io/data-models/context.jsonld"
+                    ]
+                }).then(
+                    (response) => {
+                        MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);
+                        this.subscriptionId = response.subscription.id;
+                        this.refresh_interval = setInterval(refreshNGSISubscription.bind(this), 1000 * 60 * 60 * 2);  // each 2 hours
+                        doInitialQueries.call(this, id_pattern, types, filter, attributes, metadata);
+                    }, (e) => {
+                        if (e instanceof NGSI.ProxyConnectionError) {
+                            MashupPlatform.operator.log("Error connecting with the NGSI Proxy: " + e.cause.message);
+                        } else {
+                            MashupPlatform.operator.log("Error creating subscription in the context broker server: " + e.message);
+                        }
                     }
-                },
-                expires: moment().add('3', 'hours').toISOString()
-            }, {
-                skipInitialNotification: true,
-                "@context": [
-                    "https://fiware.github.io/data-models/context.jsonld"
-                ]
-            }).then(
-                (response) => {
-                    MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);
-                    this.subscriptionId = response.subscription.id;
-                    this.refresh_interval = setInterval(refreshNGSISubscription.bind(this), 1000 * 60 * 60 * 2);  // each 2 hours
-                    doInitialQueries.call(this, id_pattern, types, filter, attributes, metadata);
-                }, (e) => {
-                    if (e instanceof NGSI.ProxyConnectionError) {
-                        MashupPlatform.operator.log("Error connecting with the NGSI Proxy: " + e.cause.message);
-                    } else {
-                        MashupPlatform.operator.log("Error creating subscription in the context broker server: " + e.message);
-                    }
-                }
-            );
-        }
-    };
+                );
+            }
+        };
 
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
         return this.connection.ld.queryEntities(

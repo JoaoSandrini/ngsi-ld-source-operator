@@ -159,6 +159,10 @@
                 type: "Subscription",
                 entities: entities,
                 notification: {
+                    endpoint: {
+                        uri: "http://my.endpoint.org/notify",
+                        accept: "application/ld+json"
+                    },
                     attrs: attributes != null ? attributes.split(/,\s*/) : undefined,
                     metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
                     attrsFormat: attrsFormat,
@@ -166,12 +170,10 @@
                         handlerReceiveEntities.call(this, attrsFormat, notification.data);
                     }
                 },
-                expires: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString()
-            }, {
-                skipInitialNotification: true,
-                "@context": [
-                    "https://fiware.github.io/data-models/context.jsonld"
-                ]
+            expires: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
+            "@context": [
+                "https://fiware.github.io/data-models/context.jsonld"
+            ]
             }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);

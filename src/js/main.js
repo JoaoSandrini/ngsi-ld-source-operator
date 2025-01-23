@@ -154,6 +154,8 @@
 
             const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
             this.connection.ld.createSubscription({
+                id: "urn:ngsi-ld:Subscription:mySubscription",
+                type: "Subscription",
                 description: "ngsi source subscription",
                 subject: {
                     entities: entities,

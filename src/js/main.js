@@ -145,7 +145,7 @@
                 entities = types.split(',').map((type) => {
                     return {
                         idPattern: id_pattern,
-                        type: type
+                        type: type.trim()
                     };
                 });
             } else {
@@ -155,22 +155,18 @@
             const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
 
             this.connection.ld.createSubscription({
-                "id": "urn:ngsi-ld:Subscription:mySubscription",
-                "type": "Subscription",
-                "entities": [
-                    {
-                        "type": types,
-                    }
-                ],
-                "notification": {
-                    "attrs": attributes != null ? attributes.split(/,\s*/) : undefined,
-                    "metadata": metadata != null ? metadata.split(/,\s*/) : undefined,
-                    "attrsFormat": attrsFormat,
+                id: "urn:ngsi-ld:Subscription:mySubscription",
+                type: "Subscription",
+                entities: entities,
+                notification: {
+                    attrs: attributes != null ? attributes.split(/,\s*/) : undefined,
+                    metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
+                    attrsFormat: attrsFormat,
                     callback: (notification) => {
                         handlerReceiveEntities.call(this, attrsFormat, notification.data);
                     }
                 },
-                expires: moment().add('3', 'hours').toISOString()
+                expires: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString()
             }, {
                 skipInitialNotification: true,
                 "@context": [

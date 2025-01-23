@@ -156,7 +156,7 @@
 
             this.connection.ld.createSubscription({
                 id: "urn:ngsi-ld:Subscription:mySubscription",
-                type: "Subscription",
+                type: Subscription,
                 entities: entities,
                 notification: {
                     attrs: attributes != null ? attributes.split(/,\s*/) : undefined,

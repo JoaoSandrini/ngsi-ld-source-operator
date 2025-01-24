@@ -155,16 +155,16 @@
             // const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
 
             this.connection.ld.createSubscription({
-                "id": "urn:subscription:1",
-                "type": "Subscription",
-                "entities": [{
-                              "type": "Room"
-                }],
-                "notification": {
-                      "endpoint": {
-                              "uri": "http://ptsv2.com/t/30xad-1596541146/post",
-                              "accept": "application/json"
-                      }
+                    "id": "urn:subscription:1",
+                    "type": "Subscription",
+                    "entities": [{
+                    "type": "Room"
+                    }],
+                    "notification": {
+                        "endpoint": {
+                        "uri": "http://ptsv2.com/t/30xad-1596541146/post",
+                        "accept": "application/json"
+                    }
                 }
               }).then(
                 (response) => {

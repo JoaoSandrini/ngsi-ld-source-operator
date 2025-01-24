@@ -89,7 +89,7 @@
 
         this.connection = new NGSI.Connection(this.ngsi_server, {
             use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token'),
-            request_headers: request_headers,
+            request_headers: request_headers, // Passar aqui o Auth Token
             ngsi_proxy_url: this.ngsi_proxy
         });
 
@@ -145,7 +145,7 @@
                 entities = types.split(',').map((type) => {
                     return {
                         idPattern: id_pattern,
-                        type: type.trim()
+                        type: type
                     };
                 });
             } else {
@@ -153,35 +153,33 @@
             }
 
             const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
-
             this.connection.ld.createSubscription({
-                id: "urn:ngsi-ld:Subscription:mySubscription",
+                id: "urn:ngsi-ld:Subscription:SOWSubscription",
                 type: "Subscription",
                 entities: entities,
                 notification: {
-                    endpoint: {
-                        uri: "http://my.endpoint.org/notify",
-                        accept: "application/ld+json"
-                    },
                     attrs: attributes != null ? attributes.split(/,\s*/) : undefined,
                     metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
                     attrsFormat: attrsFormat,
-                    callback: (notification) => {
-                        handlerReceiveEntities.call(this, attrsFormat, notification.data);
+                    endpoint: {
+                        callback: (notification) => {
+                            handlerReceiveEntities.call(this, attrsFormat, notification.data);
+                        },
+                        accept: "application/json"
                     }
                 },
-                expires: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
                 "@context": [
-                    "https://fiware.github.io/data-models/context.jsonld"
-                ],
-                skipInitialNotification: true
+                    "https://fiware.github.io/data-models/context.jsonld",
+                    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+                ]
             }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);
                     this.subscriptionId = response.subscription.id;
                     this.refresh_interval = setInterval(refreshNGSISubscription.bind(this), 1000 * 60 * 60 * 2);  // each 2 hours
                     doInitialQueries.call(this, id_pattern, types, filter, attributes, metadata);
-                }, (e) => {
+                },
+                (e) => {
                     if (e instanceof NGSI.ProxyConnectionError) {
                         MashupPlatform.operator.log("Error connecting with the NGSI Proxy: " + e.cause.message);
                     } else {

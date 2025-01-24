@@ -159,13 +159,13 @@
                 type: "Subscription",
                 entities: [
                     {
-                        "idPattern": id_pattern,
-                        "type": types
+                        idPattern: id_pattern,
+                        type: types
                     }
                 ],
                 notification: {
                     endpoint: {
-                        uri: "http://my.endpoint.org/notify",
+                        uri: "http://host.docker.internal:8000/",
                         accept: "application/ld+json"
                     }
                 }

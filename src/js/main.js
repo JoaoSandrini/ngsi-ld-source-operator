@@ -155,21 +155,18 @@
             // const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
 
             this.connection.ld.createSubscription({
-                id: "urn:ngsi-ld:Subscription:mySubscription",
-                type: "Subscription",
-                entities: [
-                    {
-                        idPattern: id_pattern,
-                        type: types
-                    }
-                ],
-                notification: {
-                    endpoint: {
-                        uri: "http://host.docker.internal:8000/",
-                        accept: "application/ld+json"
-                    }
+                "id": "urn:subscription:1",
+                "type": "Subscription",
+                "entities": [{
+                              "type": "Room"
+                }],
+                "notification": {
+                      "endpoint": {
+                              "uri": "http://ptsv2.com/t/30xad-1596541146/post",
+                              "accept": "application/json"
+                      }
                 }
-            }).then(
+              }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);
                     this.subscriptionId = response.subscription.id;

@@ -91,7 +91,6 @@
             use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token'),
             request_headers: request_headers, // Passar aqui o Auth Token
             ngsi_proxy_url: this.ngsi_proxy
-            
         });
 
         let types = MashupPlatform.prefs.get('ngsi_entities').trim().replace(/,+\s+/g, ',');
@@ -173,7 +172,6 @@
                     "https://fiware.github.io/data-models/context.jsonld",
                     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
                 ]
-                
             }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);

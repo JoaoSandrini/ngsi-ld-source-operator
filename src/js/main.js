@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ * Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* globals MashupPlatform, moment, NGSI */
+
 (function () {
 
     "use strict";
@@ -53,17 +72,26 @@
         const request_headers = {};
 
         if (MashupPlatform.prefs.get('use_owner_credentials')) {
-
+            request_headers['FIWARE-OAuth-Token'] = 'true';
+            request_headers['FIWARE-OAuth-Header-Name'] = 'X-Auth-Token';
+            request_headers['FIWARE-OAuth-Source'] = 'workspaceowner';
         }
 
         const tenant = MashupPlatform.prefs.get('ngsi_tenant').trim();
+        if (tenant !== '') {
+            request_headers['FIWARE-Service'] = tenant;
         }
 
         const path = MashupPlatform.prefs.get('ngsi_service_path').trim();
+        if (path !== '' && path !== '/') {
+            request_headers['FIWARE-ServicePath'] = path;
+        }
 
         this.connection = new NGSI.Connection(this.ngsi_server, {
             use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token'),
+            request_headers: request_headers, // Passar aqui o Auth Token
             ngsi_proxy_url: this.ngsi_proxy
+            
         });
 
         let types = MashupPlatform.prefs.get('ngsi_entities').trim().replace(/,+\s+/g, ',');
@@ -118,34 +146,42 @@
                 entities = types.split(',').map((type) => {
                     return {
                         idPattern: id_pattern,
-                        type: type.trim()
+                        type: type
                     };
                 });
             } else {
                 entities.push({idPattern: id_pattern});
             }
 
-            // const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
-
+            const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
             this.connection.ld.createSubscription({
-                "id": "urn:subscription:1",
-                "type": "Subscription",
-                "entities": [{
-                    "type": "Room"
-                }],
-                "notification": {
-                    "endpoint": {
-                        "uri": "http://ptsv2.com/t/30xad-1596541146/post",
-                        "accept": "*/*"
+                id: "urn:ngsi-ld:Subscription:SOWSubscription",
+                type: "Subscription",
+                entities: entities,
+                notification: {
+                    attrs: attributes != null ? attributes.split(/,\s*/) : undefined,
+                    metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
+                    attrsFormat: attrsFormat,
+                    endpoint: {
+                        callback: (notification) => {
+                            handlerReceiveEntities.call(this, attrsFormat, notification.data);
+                        },
+                        accept: "application/json"
                     }
-                }
+                },
+                "@context": [
+                    "https://fiware.github.io/data-models/context.jsonld",
+                    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+                ]
+                
             }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);
                     this.subscriptionId = response.subscription.id;
                     this.refresh_interval = setInterval(refreshNGSISubscription.bind(this), 1000 * 60 * 60 * 2);  // each 2 hours
                     doInitialQueries.call(this, id_pattern, types, filter, attributes, metadata);
-                }, (e) => {
+                },
+                (e) => {
                     if (e instanceof NGSI.ProxyConnectionError) {
                         MashupPlatform.operator.log("Error connecting with the NGSI Proxy: " + e.cause.message);
                     } else {
@@ -154,10 +190,20 @@
                 }
             );
         }
+    };
 
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
         return this.connection.ld.queryEntities(
             {
+                idPattern: idPattern,
+                type: types,
+                count: true,
+                keyValues: attrsFormat === "keyValues",
+                limit: 100,
+                offset: page * 100,
+                q: filter,
+                attrs: attributes,
+                metadata: metadata
             }
         ).then(
             (response) => {

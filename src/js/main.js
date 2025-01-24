@@ -186,13 +186,13 @@
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
         return this.connection.ld.queryEntities(
             {
-                idPattern: idPattern,
-                type: types,
-                count: false,
-                keyValues: attrsFormat === "keyValues",
-                q: filter,
-                attrs: attributes,
-                metadata: metadata
+                // idPattern: idPattern,
+                // type: types,
+                // count: false,
+                // keyValues: attrsFormat === "keyValues",
+                // q: filter,
+                // attrs: attributes,
+                // metadata: metadata
             }
         ).then(
             (response) => {

@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ * Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* globals MashupPlatform, moment, NGSI */
+
 (function () {
 
     "use strict";
@@ -53,16 +72,24 @@
         const request_headers = {};
 
         if (MashupPlatform.prefs.get('use_owner_credentials')) {
-
+            request_headers['FIWARE-OAuth-Token'] = 'true';
+            request_headers['FIWARE-OAuth-Header-Name'] = 'X-Auth-Token';
+            request_headers['FIWARE-OAuth-Source'] = 'workspaceowner';
         }
 
         const tenant = MashupPlatform.prefs.get('ngsi_tenant').trim();
+        if (tenant !== '') {
+            request_headers['FIWARE-Service'] = tenant;
         }
 
         const path = MashupPlatform.prefs.get('ngsi_service_path').trim();
+        if (path !== '' && path !== '/') {
+            request_headers['FIWARE-ServicePath'] = path;
+        }
 
         this.connection = new NGSI.Connection(this.ngsi_server, {
             use_user_fiware_token: MashupPlatform.prefs.get('use_user_fiware_token'),
+            request_headers: request_headers,
             ngsi_proxy_url: this.ngsi_proxy
         });
 
@@ -154,10 +181,18 @@
                 }
             );
         }
+    };
 
     const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
         return this.connection.ld.queryEntities(
             {
+                // idPattern: idPattern,
+                // type: types,
+                // count: false,
+                // keyValues: attrsFormat === "keyValues",
+                // q: filter,
+                // attrs: attributes,
+                // metadata: metadata
             }
         ).then(
             (response) => {

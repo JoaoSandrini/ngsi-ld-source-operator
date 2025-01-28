@@ -165,7 +165,7 @@
                         callback: (notification) => {
                             handlerReceiveEntities.call(this, attrsFormat, notification.data);
                         },
-                        accept: "application/ld+json"
+                        accept: "application/json"
                     }
                 },
                 

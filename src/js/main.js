@@ -160,7 +160,7 @@
                 notification: {
                     attrs: attributes != null ? attributes.split(/,\s*/) : undefined,
                     metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
-                    attrsFormat: attrsFormat,
+                    //attrsFormat: attrsFormat,
                     endpoint: {
                         callback: (notification) => {
                             handlerReceiveEntities.call(this, attrsFormat, notification.data);

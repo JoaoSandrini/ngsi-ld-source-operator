@@ -168,12 +168,12 @@
                         accept: "application/ld+json"
                     }
                 },
-                /*
+                
                 "@context": [
                     "https://fiware.github.io/data-models/context.jsonld",
                     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
                 ]
-                */
+                
             }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);

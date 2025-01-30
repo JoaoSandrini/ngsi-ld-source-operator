@@ -151,7 +151,6 @@
                 entities.push({idPattern: id_pattern});
             }
 
-            // const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
             this.connection.ld.createSubscription({
                 id: "urn:ngsi-ld:Subscription:ngsi-ld-source-operator",
                 type: "Subscription",

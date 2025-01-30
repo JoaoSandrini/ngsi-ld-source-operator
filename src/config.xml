@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<operator xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="CoNWeT" name="ngsi-source" version="4.2.0">
+<operator xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="CoNWeT" name="ngsi-source-ld" version="0.1">
     <details>
         <title>NGSI source</title>
         <homepage>https://github.com/wirecloud-fiware/ngsi-source</homepage>
@@ -23,13 +23,13 @@
             type="text"
             label="NGSI server URL"
             description="URL of the Orion Context Broker to use for retrieving entity information"
-            default="http://orion.lab.fiware.org:1026/" />
+            default="http://host.docker.internal:9090/" />
         <preference
             name="ngsi_proxy"
             type="text"
             label="NGSI proxy URL"
             description="URL of the Orion Context Broker proxy to use for receiving notifications about changes"
-            default="https://ngsiproxy.lab.fiware.org" />
+            default="http://host.docker.internal:3005/" />
         <preference
             name="use_user_fiware_token"
             type="boolean"
@@ -59,7 +59,7 @@
             type="text"
             label="NGSI entity types"
             description="A comma separated list of entity types to use for filtering entities from the Orion Context broker. Leave this field empty if you don't want to filter entities by type."
-            default="" />
+            default="https://uri.fiware.org/ns/dataModels%23Building" />
         <preference
             name="ngsi_id_filter"
             type="text"
@@ -89,12 +89,10 @@
             type="text"
             label="Monitored NGSI Attributes"
             description="A comma separated list of attributes to monitor for updates. Those changes are tracked by creating a subscription inside the context broker. If this list is empty, that subscription won't be created. Use `*` to subscribe to changes on any attribute."
-            default="" />
+            default="location" />
     </preferences>
     <wiring>
         <outputendpoint name="entityOutput" type="text" label="Entities" description="Initial entity values and entity updates" friendcode="entity-list"/>
-        <outputendpoint name="normalizedOutput" type="text" label="Normalized Entities" description="Initial entity values and entity updates" friendcode="entity-normalized-list"/>
-        <outputendpoint name="ngsimetadata" type="text" label="NGSI metadata" description="Metadata of the NGSI config usable on wizards creating data dashboards such as NGSI-dashboard-creatorI" friendcode="ngsi-metadata" />
     </wiring>
     <scripts>
         <script src="lib/js/moment-with-locales.min.js"/>

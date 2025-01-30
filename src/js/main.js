@@ -26,8 +26,7 @@
     /* *****************************************************************************/
 
     const doInitialQueries = function doInitialQueries(idPattern, types, filter, attributes, metadata) {
-        const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
-        this.query_task = requestInitialData.call(this, idPattern, types, filter, attributes, metadata, attrsFormat, 0);
+        this.query_task = requestInitialData.call(this, idPattern, types, filter, attributes, metadata, 0);
     };
 
     const refreshNGSISubscription = function refreshNGSISubscription() {
@@ -152,7 +151,7 @@
                 entities.push({idPattern: id_pattern});
             }
 
-            const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
+            //const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
             this.connection.ld.createSubscription({
                 id: "urn:ngsi-ld:Subscription:ngsi-ld-source-operator",
                 type: "Subscription",
@@ -191,13 +190,12 @@
         }
     };
 
-    const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
+    const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, page) {
         return this.connection.ld.queryEntities(
             {
                 idPattern: idPattern,
                 type: types,
                 count: true,
-                keyValues: attrsFormat === "keyValues",
                 limit: 100,
                 offset: page * 100,
                 q: filter,
@@ -206,9 +204,9 @@
             }
         ).then(
             (response) => {
-                handlerReceiveEntities.call(this, attrsFormat, response.results);
+                handlerReceiveEntities.call(this, response.results);
                 if (page < 100 && (page + 1) * 100 < response.count) {
-                    return requestInitialData.call(this, idPattern, types, filter, attributes, metadata, attrsFormat, page + 1);
+                    return requestInitialData.call(this, idPattern, types, filter, attributes, metadata, page + 1);
                 }
             },
             () => {

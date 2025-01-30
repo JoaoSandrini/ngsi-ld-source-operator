@@ -170,8 +170,7 @@
                     "https://fiware.github.io/data-models/context.jsonld",
                     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
                 ]
-                
-                }).then(
+            }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);
                     this.subscriptionId = response.subscription.id;

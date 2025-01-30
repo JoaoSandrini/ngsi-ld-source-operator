@@ -151,7 +151,7 @@
                 entities.push({idPattern: id_pattern});
             }
 
-            //const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
+            // const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
             this.connection.ld.createSubscription({
                 id: "urn:ngsi-ld:Subscription:ngsi-ld-source-operator",
                 type: "Subscription",
@@ -166,13 +166,12 @@
                         accept: "application/json"
                     }
                 },
-                
                 "@context": [
                     "https://fiware.github.io/data-models/context.jsonld",
                     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
                 ]
                 
-            }).then(
+                }).then(
                 (response) => {
                     MashupPlatform.operator.log("Subscription created successfully (id: " + response.subscription.id + ")", MashupPlatform.log.INFO);
                     this.subscriptionId = response.subscription.id;

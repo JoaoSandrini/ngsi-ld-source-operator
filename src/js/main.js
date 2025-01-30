@@ -154,7 +154,7 @@
 
             const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
             this.connection.ld.createSubscription({
-                id: "urn:ngsi-ld:Subscription:SOWSubscription",
+                id: "urn:ngsi-ld:Subscription:ngsi-ld-source-operator",
                 type: "Subscription",
                 entities: entities,
                 notification: {
@@ -162,7 +162,7 @@
                     metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
                     endpoint: {
                         callback: (notification) => {
-                            handlerReceiveEntities.call(this, attrsFormat, notification.data);
+                            handlerReceiveEntities.call(this, notification.data);
                         },
                         accept: "application/json"
                     }

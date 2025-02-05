@@ -199,7 +199,7 @@
                 q: filter,
                 attrs: attributes,
                 metadata: metadata,
-                format: "keyValues"
+                keyValues: true
             }
         ).then(
             (response) => {

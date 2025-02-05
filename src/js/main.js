@@ -46,7 +46,7 @@
     };
 
     const handlerReceiveEntities = function handlerReceiveEntities(format, elements) {
-        if (MashupPlatform.operator.outputs.entityOutput.connected && format === "keyValues") {
+        if (MashupPlatform.operator.outputs.entityOutput.connected) {
             MashupPlatform.wiring.pushEvent("entityOutput", elements);
         } else if (MashupPlatform.operator.outputs.entityOutput.connected) {
             MashupPlatform.wiring.pushEvent("entityOutput", elements.map(normalize2KeyValue));

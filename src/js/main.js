@@ -198,7 +198,8 @@
                 offset: page * 100,
                 q: filter,
                 attrs: attributes,
-                metadata: metadata
+                metadata: metadata,
+                format: "keyValues"
             }
         ).then(
             (response) => {

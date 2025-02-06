@@ -152,7 +152,6 @@
                 entities.push({idPattern: id_pattern});
             }
 
-            const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
             this.connection.ld.createSubscription({
                 id: "urn:ngsi-ld:Subscription:ngsi-ld-source-operator",
                 type: "Subscription",
@@ -166,7 +165,7 @@
                         },
                     }
                 },
-                "@context": [   
+                "@context": [
                     "https://fiware.github.io/data-models/context.jsonld",
                     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
                 ]

@@ -153,7 +153,7 @@
             }
 
             this.connection.ld.createSubscription({
-                id: "urn:ngsi-ld:Subscription:ngsi-ld-source",
+                id: "urn:ngsi-ld:Subscription:ngsi-ld-source-operator",
                 type: "Subscription",
                 entities: entities,
                 notification: {
@@ -161,7 +161,7 @@
                     metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
                     endpoint: {
                         callback: (notification) => {
-                            handlerReceiveEntities.call(this, notification.attrsFormat, notification.data);
+                            handlerReceiveEntities.call(notification.attrsFormat, notification.data);
                         },
                     }
                 },

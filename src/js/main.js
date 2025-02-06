@@ -47,7 +47,9 @@
 
     const handlerReceiveEntities = function handlerReceiveEntities(format, elements) {
         if (MashupPlatform.operator.outputs.entityOutput.connected && format === "keyValues") {
-            MashupPlatform.wiring.pushEvent("entityOutput", elements);
+            MashupPlatform.wiring.pushEvent("entityOutput", elements).then(
+                MashupPlatform.operator.log("Subscription refreshed sucessfully", MashupPlatform.log.INFO)
+            );
         } else if (MashupPlatform.operator.outputs.entityOutput.connected) {
             MashupPlatform.wiring.pushEvent("entityOutput", elements.map(normalize2KeyValue));
         }
@@ -156,7 +158,6 @@
                 type: "Subscription",
                 entities: entities,
                 notification: {
-                    format: "keyValues",
                     attrs: attributes != null ? attributes.split(/,\s*/) : undefined,
                     metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
                     endpoint: {
@@ -199,7 +200,6 @@
                 q: filter,
                 attrs: attributes,
                 metadata: metadata,
-                keyValues: true
             }
         ).then(
             (response) => {

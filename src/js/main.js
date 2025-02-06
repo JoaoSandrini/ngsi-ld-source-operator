@@ -26,7 +26,8 @@
     /* *****************************************************************************/
 
     const doInitialQueries = function doInitialQueries(idPattern, types, filter, attributes, metadata) {
-        this.query_task = requestInitialData.call(this, idPattern, types, filter, attributes, metadata, 0);
+        const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
+        this.query_task = requestInitialData.call(this, idPattern, types, filter, attributes, metadata, attrsFormat, 0);
     };
 
     const refreshNGSISubscription = function refreshNGSISubscription() {
@@ -48,14 +49,8 @@
     const handlerReceiveEntities = function handlerReceiveEntities(format, elements) {
         if (MashupPlatform.operator.outputs.entityOutput.connected && format === "keyValues") {
             MashupPlatform.wiring.pushEvent("entityOutput", elements)
-                .then(
-                    MashupPlatform.operator.log("Output sucessfully", MashupPlatform.log.INFO)
-                );
         } else if (MashupPlatform.operator.outputs.entityOutput.connected) {
             MashupPlatform.wiring.pushEvent("entityOutput", elements.map(normalize2KeyValue))
-                .then(
-                    MashupPlatform.operator.log("Output keyvalue sucessfully", MashupPlatform.log.INFO)
-                );
         }
         if (MashupPlatform.operator.outputs.normalizedOutput && format === "normalized") {
             MashupPlatform.wiring.pushEvent("normalizedOutput", elements);
@@ -157,6 +152,7 @@
                 entities.push({idPattern: id_pattern});
             }
 
+            const attrsFormat = MashupPlatform.operator.outputs.normalizedOutput.connected ? "normalized" : "keyValues";
             this.connection.ld.createSubscription({
                 id: "urn:ngsi-ld:Subscription:ngsi-ld-source-operator",
                 type: "Subscription",
@@ -166,15 +162,11 @@
                     metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
                     endpoint: {
                         callback: (notification) => {
-                            if (notification && Array.isArray(notification.data)) {
-                                handlerReceiveEntities.call(this, notification.data);
-                            } else {
-                                MashupPlatform.operator.log("Received invalid notification", MashupPlatform.log.WARN);
-                            }
+                            handlerReceiveEntities.call(this, notification.attrsFormat, notification.data);
                         },
                     }
                 },
-                "@context": [
+                "@context": [   
                     "https://fiware.github.io/data-models/context.jsonld",
                     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
                 ]
@@ -196,7 +188,7 @@
         }
     };
 
-    const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, page) {
+    const requestInitialData = function requestInitialData(idPattern, types, filter, attributes, metadata, attrsFormat, page) {
         return this.connection.ld.queryEntities(
             {
                 idPattern: idPattern,
@@ -207,12 +199,13 @@
                 q: filter,
                 attrs: attributes,
                 metadata: metadata,
+                keyValues: attrsFormat === "keyValues"
             }
         ).then(
             (response) => {
-                handlerReceiveEntities.call(this, response.results);
+                handlerReceiveEntities.call(this, attrsFormat, response.results);
                 if (page < 100 && (page + 1) * 100 < response.count) {
-                    return requestInitialData.call(this, idPattern, types, filter, attributes, metadata, page + 1);
+                    return requestInitialData.call(this, idPattern, types, filter, attributes, metadata, attrsFormat, page + 1);
                 }
             },
             () => {

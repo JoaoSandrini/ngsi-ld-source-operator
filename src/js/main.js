@@ -47,11 +47,15 @@
 
     const handlerReceiveEntities = function handlerReceiveEntities(format, elements) {
         if (MashupPlatform.operator.outputs.entityOutput.connected && format === "keyValues") {
-            MashupPlatform.wiring.pushEvent("entityOutput", elements).then(
-                MashupPlatform.operator.log("Subscription refreshed sucessfully", MashupPlatform.log.INFO)
+            MashupPlatform.wiring.pushEvent("entityOutput", elements)
+            .then(
+                MashupPlatform.operator.log("Output sucessfully", MashupPlatform.log.INFO)
             );
         } else if (MashupPlatform.operator.outputs.entityOutput.connected) {
-            MashupPlatform.wiring.pushEvent("entityOutput", elements.map(normalize2KeyValue));
+            MashupPlatform.wiring.pushEvent("entityOutput", elements.map(normalize2KeyValue))
+            .then(
+                MashupPlatform.operator.log("Output keyvalue sucessfully", MashupPlatform.log.INFO)
+            );
         }
         if (MashupPlatform.operator.outputs.normalizedOutput && format === "normalized") {
             MashupPlatform.wiring.pushEvent("normalizedOutput", elements);
@@ -162,9 +166,12 @@
                     metadata: metadata != null ? metadata.split(/,\s*/) : undefined,
                     endpoint: {
                         callback: (notification) => {
-                            handlerReceiveEntities.call(this, notification.data);
+                            if (notification && Array.isArray(notification.data)) {
+                                handlerReceiveEntities.call(this, notification.data);
+                            } else {
+                                MashupPlatform.operator.log("Received invalid notification", MashupPlatform.log.WARN);
+                            }
                         },
-                        accept: "application/json"
                     }
                 },
                 "@context": [

@@ -153,7 +153,7 @@
             }
 
             this.connection.ld.createSubscription({
-                id: "urn:ngsi-ld:Subscription:ngsi-ld-source-operator",
+                id: "urn:ngsi-ld:Subscription:ngsi-ld-source",
                 type: "Subscription",
                 entities: entities,
                 notification: {
